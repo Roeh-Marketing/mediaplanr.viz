@@ -1,0 +1,35 @@
+Package: mediaplanr.viz
+Title: Web Visualizations for Media Plans
+Version: 0.0.0.9000
+Authors@R: 
+    person("Ben Denis", "Shaffer", , "my.blogdown@gmail.com", role = c("aut", "cre"))
+Description: Chart specifications for mediaplanr objects. Every function
+    builds a plain list -- an Apache ECharts option -- from one of the
+    projections mediaplanr exports, so the same output renders in Shiny,
+    in a notebook, or in any frontend that speaks JSON.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+URL: https://roeh-marketing.github.io/mediaplanr.viz/, https://github.com/Roeh-Marketing/mediaplanr.viz
+BugReports: https://github.com/Roeh-Marketing/mediaplanr.viz/issues
+Remotes: Roeh-Marketing/mediaplanr
+Config/testthat/edition: 3
+Config/Needs/website: brand.yml
+Depends: R (>= 4.1.0)
+Suggests: 
+    chromote,
+    htmlwidgets,
+    knitr,
+    rmarkdown,
+    testthat,
+    withr
+Imports: 
+    echarts4r,
+    htmltools,
+    jsonlite,
+    mediaplanr,
+    reactable,
+    stats,
+    utils
+VignetteBuilder: knitr

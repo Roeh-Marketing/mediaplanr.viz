@@ -1,0 +1,10 @@
+^LICENSE\.md$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
+^_brand\.yml$
+^logos$
+^\.DS_Store$
+^\.Rcheck$
+^.*\.tar\.gz$

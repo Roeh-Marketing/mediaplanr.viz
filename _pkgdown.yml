@@ -1,0 +1,53 @@
+url: https://roeh-marketing.github.io/mediaplanr.viz/
+
+template:
+  bslib:
+    version: 5
+    brand: _brand.yml
+  light-switch: true
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github, lightswitch]
+
+articles:
+- title: See it
+  contents: gallery
+
+reference:
+- title: Structure
+  desc: >
+    What hangs beneath a plan. The tree is the shape of its ownership; the
+    table is the same thing a planner can sort and open; the grid says which
+    cells are locked and by whom. One subplan keeps one colour across all
+    three.
+  contents:
+  - ec_tree
+  - tbl_tree
+  - ec_ownership
+
+- title: Money
+  desc: >
+    Where the spend sits in the nesting, how one backed cell arrives at its
+    number, and how it moves across a set of scenarios.
+  contents:
+  - ec_sunburst
+  - ec_rollup
+  - ec_compare
+
+- title: Lineage
+  desc: >
+    Where a scenario came from. Each one measured against the plan it was
+    actually derived from, which is what makes a chain read as a chain.
+  contents:
+  - ec_lineage
+
+- title: The spec
+  desc: >
+    Every chart function returns a spec -- a plain list holding an ECharts
+    option. Send it as JSON, or draw it as a widget.
+  contents:
+  - new_spec
+  - as_json
+  - viz_theme
