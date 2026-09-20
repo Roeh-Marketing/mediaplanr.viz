@@ -107,7 +107,7 @@ test_that("the baseline is ringed and status drives node colour", {
 
 test_that("scenarios with no parent in the set are separate roots", {
   b   <- flat_plan("base")
-  s1  <- build_scenario(b, c(Search = 60), name = "s1")
+  s1  <- build_scenario(b, at_cell(Search = 60), name = "s1")
   set <- add_scenario(scenario_set(s1, "s1"), flat_plan("unrelated"))
   o   <- opt(ec_lineage(set))
   expect_length(o$series[[1]]$data, 2)

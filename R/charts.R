@@ -19,13 +19,15 @@
 #' @return A [new_spec()] of kind `"sunburst"`.
 #' @examples
 #' topline <- mediaplanr::media_plan_from_df(
-#'   data.frame(channel = c("TV", "Search"), planned_spend = c(100, 40)),
-#'   grain = "channel", name = "Q3 topline"
+#'   data.frame(week = as.Date("2026-07-06"), channel = c("TV", "Search"),
+#'              planned_spend = c(100, 40)),
+#'   grain = "channel", time = "week", name = "Q3 topline"
 #' )
 #' tv <- mediaplanr::media_plan_from_df(
-#'   data.frame(channel = "TV", partner = c("NBC", "ESPN"),
+#'   data.frame(week = as.Date("2026-07-06"), channel = "TV",
+#'              partner = c("NBC", "ESPN"),
 #'              planned_spend = c(70, 50)),
-#'   grain = c("channel", "partner"), name = "TV detail"
+#'   grain = c("channel", "partner"), time = "week", name = "TV detail"
 #' )
 #' ec_sunburst(mediaplanr::attach_subplan(topline, tv))
 #' @seealso [ec_tree()], [ec_rollup()]
@@ -106,13 +108,15 @@ ec_sunburst <- function(x, theme = "light") {
 #' @return A [new_spec()] of kind `"rollup"`.
 #' @examples
 #' topline <- mediaplanr::media_plan_from_df(
-#'   data.frame(channel = c("TV", "Search"), planned_spend = c(100, 40)),
-#'   grain = "channel", name = "Q3 topline"
+#'   data.frame(week = as.Date("2026-07-06"), channel = c("TV", "Search"),
+#'              planned_spend = c(100, 40)),
+#'   grain = "channel", time = "week", name = "Q3 topline"
 #' )
 #' tv <- mediaplanr::media_plan_from_df(
-#'   data.frame(channel = "TV", partner = c("NBC", "ESPN"),
+#'   data.frame(week = as.Date("2026-07-06"), channel = "TV",
+#'              partner = c("NBC", "ESPN"),
 #'              planned_spend = c(70, 50)),
-#'   grain = c("channel", "partner"), name = "TV detail"
+#'   grain = c("channel", "partner"), time = "week", name = "TV detail"
 #' )
 #' ec_rollup(mediaplanr::attach_subplan(topline, tv))
 #' @seealso [ec_sunburst()], [mediaplanr::attach_subplan()]
@@ -199,17 +203,19 @@ ec_rollup <- function(x, key = NULL, theme = "light") {
 #' @param x A `ScenarioSet`, or the data frame
 #'   [mediaplanr::compare_scenarios()] returns at `level = "cell"`.
 #' @param by Columns identifying a line to draw. Defaults to the set's line
-#'   item grain — the grain without its week — so a weekly set draws one line
+#'   item grain — the grain without its time column — so a weekly set draws one line
 #'   per line item rather than one per cell-week. Required when `x` is a data
 #'   frame with no obvious line item columns.
 #' @param theme A [viz_theme()] name or override list.
 #' @return A [new_spec()] of kind `"compare"`.
 #' @examples
 #' base <- mediaplanr::media_plan_from_df(
-#'   data.frame(channel = c("TV", "Search"), planned_spend = c(80, 40)),
-#'   grain = "channel", name = "base"
+#'   data.frame(week = as.Date("2026-07-06"), channel = c("TV", "Search"),
+#'              planned_spend = c(80, 40)),
+#'   grain = "channel", time = "week", name = "base"
 #' )
-#' s1  <- mediaplanr::build_scenario(base, c(Search = 60), name = "Search up")
+#' s1  <- mediaplanr::build_scenario(
+#'   base, list(target = list(channel = "Search"), total = 60), name = "Search up")
 #' set <- mediaplanr::add_scenario(mediaplanr::scenario_set(base), s1)
 #' ec_compare(set)
 #' @seealso [ec_lineage()], [mediaplanr::compare_scenarios()]

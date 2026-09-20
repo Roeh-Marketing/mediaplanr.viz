@@ -11,7 +11,7 @@ ec_compare(x, by = NULL, theme = "light")
 \code{\link[mediaplanr:compare_scenarios]{mediaplanr::compare_scenarios()}} returns at \code{level = "cell"}.}
 
 \item{by}{Columns identifying a line to draw. Defaults to the set's line
-item grain — the grain without its week — so a weekly set draws one line
+item grain — the grain without its time column — so a weekly set draws one line
 per line item rather than one per cell-week. Required when \code{x} is a data
 frame with no obvious line item columns.}
 
@@ -28,10 +28,12 @@ subplan is flat by construction, because no scenario can edit it.
 }
 \examples{
 base <- mediaplanr::media_plan_from_df(
-  data.frame(channel = c("TV", "Search"), planned_spend = c(80, 40)),
-  grain = "channel", name = "base"
+  data.frame(week = as.Date("2026-07-06"), channel = c("TV", "Search"),
+             planned_spend = c(80, 40)),
+  grain = "channel", time = "week", name = "base"
 )
-s1  <- mediaplanr::build_scenario(base, c(Search = 60), name = "Search up")
+s1  <- mediaplanr::build_scenario(
+  base, list(target = list(channel = "Search"), total = 60), name = "Search up")
 set <- mediaplanr::add_scenario(mediaplanr::scenario_set(base), s1)
 ec_compare(set)
 }

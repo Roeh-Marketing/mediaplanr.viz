@@ -28,13 +28,15 @@ into the subplans to build each ring, which no single projection carries.
 }
 \examples{
 topline <- mediaplanr::media_plan_from_df(
-  data.frame(channel = c("TV", "Search"), planned_spend = c(100, 40)),
-  grain = "channel", name = "Q3 topline"
+  data.frame(week = as.Date("2026-07-06"), channel = c("TV", "Search"),
+             planned_spend = c(100, 40)),
+  grain = "channel", time = "week", name = "Q3 topline"
 )
 tv <- mediaplanr::media_plan_from_df(
-  data.frame(channel = "TV", partner = c("NBC", "ESPN"),
+  data.frame(week = as.Date("2026-07-06"), channel = "TV",
+             partner = c("NBC", "ESPN"),
              planned_spend = c(70, 50)),
-  grain = c("channel", "partner"), name = "TV detail"
+  grain = c("channel", "partner"), time = "week", name = "TV detail"
 )
 ec_sunburst(mediaplanr::attach_subplan(topline, tv))
 }

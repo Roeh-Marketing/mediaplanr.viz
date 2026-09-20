@@ -87,13 +87,15 @@
 #'   plan, and `owners`, the colour assigned to each subplan key.
 #' @examples
 #' topline <- mediaplanr::media_plan_from_df(
-#'   data.frame(channel = c("TV", "Search"), planned_spend = c(100, 40)),
-#'   grain = "channel", name = "Q3 topline"
+#'   data.frame(week = as.Date("2026-07-06"), channel = c("TV", "Search"),
+#'              planned_spend = c(100, 40)),
+#'   grain = "channel", time = "week", name = "Q3 topline"
 #' )
 #' tv <- mediaplanr::media_plan_from_df(
-#'   data.frame(channel = "TV", partner = c("NBC", "ESPN"),
+#'   data.frame(week = as.Date("2026-07-06"), channel = "TV",
+#'              partner = c("NBC", "ESPN"),
 #'              planned_spend = c(70, 50)),
-#'   grain = c("channel", "partner"), name = "TV detail"
+#'   grain = c("channel", "partner"), time = "week", name = "TV detail"
 #' )
 #' ec_tree(mediaplanr::attach_subplan(topline, tv))
 #' @seealso [ec_lineage()], [tbl_tree()], [mediaplanr::subplan_map()]
@@ -171,10 +173,12 @@ ec_tree <- function(x, theme = "light") {
 #'   `scenarios` in row order.
 #' @examples
 #' base <- mediaplanr::media_plan_from_df(
-#'   data.frame(channel = c("TV", "Search"), planned_spend = c(80, 40)),
-#'   grain = "channel", name = "base"
+#'   data.frame(week = as.Date("2026-07-06"), channel = c("TV", "Search"),
+#'              planned_spend = c(80, 40)),
+#'   grain = "channel", time = "week", name = "base"
 #' )
-#' s1  <- mediaplanr::build_scenario(base, c(Search = 60), name = "Search up")
+#' s1  <- mediaplanr::build_scenario(
+#'   base, list(target = list(channel = "Search"), total = 60), name = "Search up")
 #' set <- mediaplanr::add_scenario(mediaplanr::scenario_set(base), s1)
 #' ec_lineage(set)
 #' @seealso [ec_tree()], [ec_compare()], [mediaplanr::lineage()]

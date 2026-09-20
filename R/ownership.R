@@ -5,14 +5,16 @@
 # owner, so the locked region is a block a planner reads at a glance rather
 # than a property they have to query cell by cell.
 
-# ownership_map() returns the plan's line item columns, its week column when
-# it has one, then a fixed tail. The week column is the Date among the
-# columns that are not part of that tail.
-.ownership_week_col <- function(o) {
+# ownership_map() returns the plan's line item columns, its time column, then a
+# fixed tail. The time column is the dated one among the columns that are not
+# part of that tail -- Dates on most plans, moments on a plan of spots.
+.ownership_time_col <- function(o) {
   tail_cols <- c("key", "owner", "owner_name", "locked", "planned_spend")
   cand <- setdiff(names(o), tail_cols)
-  wk <- cand[vapply(o[cand], function(v) inherits(v, "Date"), logical(1))]
-  if (length(wk)) wk[1] else NA_character_
+  tc <- cand[vapply(o[cand], function(v) {
+    inherits(v, "Date") || inherits(v, "POSIXct")
+  }, logical(1))]
+  if (length(tc)) tc[1] else NA_character_
 }
 
 #' Chart which cells a subplan owns
@@ -31,13 +33,15 @@
 #'   (the row order), `periods` (the column order) and `owners`.
 #' @examples
 #' topline <- mediaplanr::media_plan_from_df(
-#'   data.frame(channel = c("TV", "Search"), planned_spend = c(100, 40)),
-#'   grain = "channel", name = "Q3 topline"
+#'   data.frame(week = as.Date("2026-07-06"), channel = c("TV", "Search"),
+#'              planned_spend = c(100, 40)),
+#'   grain = "channel", time = "week", name = "Q3 topline"
 #' )
 #' tv <- mediaplanr::media_plan_from_df(
-#'   data.frame(channel = "TV", partner = c("NBC", "ESPN"),
+#'   data.frame(week = as.Date("2026-07-06"), channel = "TV",
+#'              partner = c("NBC", "ESPN"),
 #'              planned_spend = c(70, 50)),
-#'   grain = c("channel", "partner"), name = "TV detail"
+#'   grain = c("channel", "partner"), time = "week", name = "TV detail"
 #' )
 #' ec_ownership(mediaplanr::attach_subplan(topline, tv))
 #' @seealso [ec_tree()], [mediaplanr::ownership_map()]
@@ -48,10 +52,11 @@ ec_ownership <- function(x, theme = "light") {
   th <- viz_theme(theme)
   if (!nrow(o)) stop("`x` has no cells to chart.", call. = FALSE)
 
-  wk <- .ownership_week_col(o)
-  periods <- if (is.na(wk)) "all" else format(sort(unique(o[[wk]])), "%b %d")
-  p_idx   <- if (is.na(wk)) rep(1L, nrow(o)) else
-    match(format(o[[wk]], "%b %d"), periods)
+  tc <- .ownership_time_col(o)
+  fmt <- if (!is.na(tc) && inherits(o[[tc]], "POSIXct")) "%b %d %H:%M" else "%b %d"
+  periods <- if (is.na(tc)) "all" else format(sort(unique(o[[tc]])), fmt)
+  p_idx   <- if (is.na(tc)) rep(1L, nrow(o)) else
+    match(format(o[[tc]], fmt), periods)
 
   # Locked rows first, grouped by owner in attach order; then the topline's.
   owned  <- unique(stats::na.omit(o$owner))
@@ -82,7 +87,7 @@ ec_ownership <- function(x, theme = "light") {
   option <- .option(
     th,
     grid = list(left = 24 + .label_px(items), right = 16, top = 12,
-                bottom = 28 + if (is.na(wk)) 0 else 34),
+                bottom = 28 + if (is.na(tc)) 0 else 34),
     xAxis = list(
       type = "category", data = as.list(periods),
       axisLabel = list(fontFamily = .font_mono, fontSize = 11,
@@ -116,5 +121,5 @@ ec_ownership <- function(x, theme = "light") {
   )
   new_spec(option, kind = "ownership", source = "ownership_map()",
            meta = list(items = items, periods = periods, owners = owners,
-                       week_col = wk))
+                       time_col = tc))
 }

@@ -34,7 +34,7 @@ top_df$planned_spend <- round(base_wk[top_df$channel] *
                                 shape[match(top_df$week, weeks)])
 
 topline <- media_plan_from_df(
-  top_df, grain = c("channel", "week"), week = "week",
+  top_df, grain = "channel", time = "week",
   name = "Q2 2026 Brand Plan", advertiser = "Acme", planner = "R. Roe"
 )
 ```
@@ -63,7 +63,7 @@ nbc <- media_plan_from_df(
              channel = "TV", partner = "NBC",
              daypart = rep(c("prime", "daytime"), 12),
              planned_spend = rep(c(38000, 12000), 12)),
-  grain = c("channel", "partner", "daypart", "week"), week = "week",
+  grain = c("channel", "partner", "daypart"), time = "week",
   name = "NBC upfront", status = "approved"
 )
 
@@ -71,7 +71,7 @@ search <- media_plan_from_df(
   data.frame(week = rep(seq(as.Date("2026-04-05"), by = "week", length.out = 13), each = 2),
              channel = "Search", engine = rep(c("Google", "Bing"), 13),
              planned_spend = rep(c(41000, 6000), 13)),
-  grain = c("channel", "engine", "week"), week = "week",
+  grain = c("channel", "engine"), time = "week",
   name = "Search Q2", nickname = "search", planner = "Search team"
 )
 

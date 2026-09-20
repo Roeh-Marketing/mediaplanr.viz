@@ -31,8 +31,9 @@ straight to \code{echarts.setOption()}. \code{as_widget()} wraps it in an
 }
 \examples{
 p <- mediaplanr::media_plan_from_df(
-  data.frame(channel = c("TV", "Search"), planned_spend = c(80, 40)),
-  grain = "channel", name = "Q3"
+  data.frame(week = as.Date("2026-07-06"), channel = c("TV", "Search"),
+             planned_spend = c(80, 40)),
+  grain = "channel", time = "week", name = "Q3"
 )
 substr(as_json(ec_tree(p)), 1, 60)
 }

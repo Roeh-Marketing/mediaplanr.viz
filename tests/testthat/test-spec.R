@@ -23,8 +23,8 @@ test_that("printing a spec says what it is, not what it contains", {
 
 test_that("as_json emits parseable JSON and keeps full precision", {
   p <- media_plan_from_df(
-    data.frame(channel = "TV", planned_spend = 1234567.89),
-    grain = "channel", name = "precise")
+    data.frame(week = fix_week(), channel = "TV", planned_spend = 1234567.89),
+    grain = "channel", time = "week", name = "precise")
   j <- as_json(ec_tree(p))
   expect_type(j, "character")
   expect_no_error(jsonlite::fromJSON(j))

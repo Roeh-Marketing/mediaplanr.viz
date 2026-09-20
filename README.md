@@ -19,13 +19,15 @@ library(mediaplanr)
 library(mediaplanr.viz)
 
 topline <- media_plan_from_df(
-  data.frame(channel = c("TV", "Search"), planned_spend = c(100000, 40000)),
-  grain = "channel", name = "Q3 topline"
+  data.frame(week = as.Date("2026-07-06"), channel = c("TV", "Search"),
+             planned_spend = c(100000, 40000)),
+  grain = "channel", time = "week", name = "Q3 topline"
 )
 tv <- media_plan_from_df(
-  data.frame(channel = "TV", partner = c("NBC", "ESPN"),
+  data.frame(week = as.Date("2026-07-06"), channel = "TV",
+             partner = c("NBC", "ESPN"),
              planned_spend = c(70000, 50000)),
-  grain = c("channel", "partner"), name = "TV detail"
+  grain = c("channel", "partner"), time = "week", name = "TV detail"
 )
 
 spec <- ec_tree(attach_subplan(topline, tv))

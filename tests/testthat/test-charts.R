@@ -30,21 +30,21 @@ test_that("each ownership cell carries its own formatted label and tooltip", {
 test_that("a weekly plan gets one column per week", {
   s <- ec_ownership(weekly_topline())
   expect_length(s$meta$periods, 3)
-  expect_identical(s$meta$week_col, "week")
+  expect_identical(s$meta$time_col, "week")
   expect_length(opt(s)$series[[1]]$data, 2 * 3)         # 2 line items x 3 weeks
 })
 
-test_that("a timeless plan gets a single column", {
+test_that("a single-period plan gets a single column", {
   s <- ec_ownership(flat_plan())
-  expect_identical(s$meta$periods, "all")
-  expect_true(is.na(s$meta$week_col))
+  expect_length(s$meta$periods, 1)
+  expect_identical(s$meta$time_col, "week")
 })
 
 test_that("big figures are abbreviated in the cell, exact in the tooltip", {
   weeks <- seq(as.Date("2026-04-06"), by = "week", length.out = 2)
   p <- media_plan_from_df(
     data.frame(week = weeks, channel = "TV", planned_spend = c(50000, 70000)),
-    grain = c("channel", "week"), week = "week", name = "big")
+    grain = "channel", time = "week", name = "big")
   d <- opt(ec_ownership(p))$series[[1]]$data
   expect_identical(d[[1]][[5]], "50k")
   expect_identical(d[[1]][[6]], "50,000")
@@ -178,7 +178,7 @@ test_that("ec_compare aggregates a weekly set to line items", {
 
 test_that("a locked cell reads flat across every scenario", {
   p   <- attach_subplan(flat_plan(), tv_sub())
-  s1  <- build_scenario(p, c(Social = 90), name = "social up")
+  s1  <- build_scenario(p, at_cell(Social = 90), name = "social up")
   set <- add_scenario(scenario_set(p, "base"), s1)
   o   <- opt(ec_compare(set))
   tv  <- o$series[[which(vapply(o$series, function(x) x$name, character(1)) ==
