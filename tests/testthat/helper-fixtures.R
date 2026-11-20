@@ -85,6 +85,29 @@ chain_set <- function() {
   add_scenario(add_scenario(add_scenario(scenario_set(b, "base"), s1), s2), s3)
 }
 
+# Approvals. mediaplanr records the date a plan was approved; its revision is
+# derived from a set's lineage, so it only exists on a set.
+revise <- mp$revise
+
+# A topline approved on a known date, with an unapproved TV subplan.
+approved_topline <- function() {
+  top <- revise(flat_plan("Q3 topline"), status = "approved",
+                approved_on = as.Date("2026-06-30"))
+  attach_subplan(top, tv_sub())
+}
+
+# base (approved 1 Jun) -> "Search up" (approved 15 Jun), and an open
+# "Social up" off the base. "Search up" is Rev 2 and current; base is Rev 1
+# and no longer current, because an approved plan was derived from it.
+approved_chain_set <- function() {
+  b  <- revise(flat_plan("base"), status = "approved",
+               approved_on = as.Date("2026-06-01"))
+  s1 <- revise(build_scenario(b, at_cell(Search = 60), name = "Search up"),
+               status = "approved", approved_on = as.Date("2026-06-15"))
+  s2 <- build_scenario(b, at_cell(Social = 90), name = "Social up")
+  add_scenario(add_scenario(scenario_set(b, "base"), s1), s2)
+}
+
 # The option a spec carries, parsed back from its JSON -- so tests assert on
 # what a browser would actually receive, not on the R list.
 opt <- function(spec) jsonlite::fromJSON(as_json(spec), simplifyVector = FALSE)

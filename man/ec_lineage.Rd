@@ -17,7 +17,8 @@ the set automatically; supply it when passing a data frame.}
 }
 \value{
 A \code{\link[=new_spec]{new_spec()}} of kind \code{"lineage"}. Its \code{meta} carries \code{ids} and
-\code{scenarios} in row order.
+\code{scenarios} in row order, and \code{current}: the scenarios that are the
+current approved plan on their branch.
 }
 \description{
 A left-to-right derivation tree: each scenario sits beside the plan it was
@@ -29,6 +30,10 @@ against the baseline.
 }
 \details{
 Nodes are coloured by workflow \strong{status}, and the baseline is ringed.
+An approved scenario with no approved descendant -- the current approved
+plan on its branch, as \code{\link[mediaplanr:lineage]{mediaplanr::lineage()}} marks it -- is drawn as a
+diamond, and an approved scenario's tooltip gives its revision and approval
+date, both derived by \code{lineage()}.
 Scenarios whose parent is not in the set are roots, so a set of
 independently authored plans draws as a forest rather than a lie.
 }

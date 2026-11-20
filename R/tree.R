@@ -124,6 +124,7 @@ ec_tree <- function(x, theme = "light") {
 
   make_node <- function(i) {
     nm <- if (is.na(m$key[i])) m$name[i] else m$key[i]
+    approval <- .approval_note(m$approved_on[i])
     list(
       name  = nm,
       value = m$spend[i],
@@ -136,7 +137,8 @@ ec_tree <- function(x, theme = "light") {
         ";font-size:12px'>", m$grain[i], "<br>", m$cadence[i], " &middot; ",
         m$line_items[i], " line items<br>",
         if (nzchar(m$status[i])) m$status[i] else "&mdash;",
-        " &middot; Rev ", m$revision[i], "<br>spend ", .fmt(m$spend[i]),
+        if (nzchar(approval)) paste0(" &middot; ", approval),
+        "<br>spend ", .fmt(m$spend[i]),
         "</span>"))
     )
   }
@@ -161,6 +163,10 @@ ec_tree <- function(x, theme = "light") {
 #' against the baseline.
 #'
 #' Nodes are coloured by workflow **status**, and the baseline is ringed.
+#' An approved scenario with no approved descendant -- the current approved
+#' plan on its branch, as [mediaplanr::lineage()] marks it -- is drawn as a
+#' diamond, and an approved scenario's tooltip gives its revision and approval
+#' date, both derived by `lineage()`.
 #' Scenarios whose parent is not in the set are roots, so a set of
 #' independently authored plans draws as a forest rather than a lie.
 #'
@@ -170,7 +176,8 @@ ec_tree <- function(x, theme = "light") {
 #'   the set automatically; supply it when passing a data frame.
 #' @param theme A [viz_theme()] name or override list.
 #' @return A [new_spec()] of kind `"lineage"`. Its `meta` carries `ids` and
-#'   `scenarios` in row order.
+#'   `scenarios` in row order, and `current`: the scenarios that are the
+#'   current approved plan on their branch.
 #' @examples
 #' base <- mediaplanr::media_plan_from_df(
 #'   data.frame(week = as.Date("2026-07-06"), channel = c("TV", "Search"),
@@ -200,8 +207,14 @@ ec_lineage <- function(x, base_name = NULL, theme = "light") {
   figure[has_p] <- paste0(figure[has_p], " (",
                           .pct(l$spend_pct_vs_parent[has_p]), ")")
 
+  # The current approved plan -- the one the set is buying against -- is the
+  # node a planner looks for first, so it is drawn as a diamond. A shape, not
+  # a colour: colour already means status, and it is "approved" either way.
+  current <- l$scenario[l$current %in% TRUE]
+
   node <- function(nm, seen = character(0)) {
     i <- which(l$scenario == nm)[1]
+    approval <- .approval_note(l$approved_on[i], l$revision[i])
     out <- list(
       name = nm, value = l$spend[i], id = l$id[i],
       itemStyle = list(
@@ -212,11 +225,15 @@ ec_lineage <- function(x, base_name = NULL, theme = "light") {
         "<b>", nm, "</b><br><span style='font-family:", .font_mono,
         ";font-size:12px'>",
         if (nzchar(l$status[i])) l$status[i] else "&mdash;",
-        " &middot; Rev ", l$revision[i], "<br>spend ", .fmt(l$spend[i]),
+        if (nzchar(approval)) paste0(" &middot; ", approval),
+        if (nm %in% current) " &middot; current",
+        "<br>spend ", .fmt(l$spend[i]),
         if (has_d[i]) paste0("<br>vs ", l$parent[i], " ",
                              .fmt_delta(l$spend_vs_parent[i])) else "",
         "</span>"))
     )
+    # Set only when it applies: a NULL left in the list would serialise as {}.
+    if (nm %in% current) out$symbol <- "diamond"
     # `seen` guards against a malformed parent cycle rather than recursing
     # until the stack goes.
     kids <- setdiff(l$scenario[!is.na(l$parent) & l$parent == nm], c(seen, nm))
@@ -240,5 +257,6 @@ ec_lineage <- function(x, base_name = NULL, theme = "light") {
   option <- .option(th, series = list(series))
   new_spec(option, kind = "lineage", source = "lineage()",
            meta = list(ids = l$id, scenarios = l$scenario,
-                       base_name = base_name %||% NA_character_))
+                       base_name = base_name %||% NA_character_,
+                       current = current))
 }

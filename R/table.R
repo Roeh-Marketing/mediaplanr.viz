@@ -61,12 +61,7 @@ tbl_tree <- function(x, theme = "light", ...) {
         "display:inline-block;height:8px;width:", bar_w,
         "px;border-radius:2px;vertical-align:middle;margin-right:8px;",
         "background:", colour)),
-      span(value, "font-weight" = "500"),
-      if (m$revision[index] > 1L) {
-        span(paste0(" Rev ", m$revision[index]),
-             "font-family" = .font_mono, "font-size" = "11px",
-             "color" = th$ink_3, "margin-left" = "6px")
-      }
+      span(value, "font-weight" = "500")
     )
   }
 
@@ -81,12 +76,22 @@ tbl_tree <- function(x, theme = "light", ...) {
     )
   }
 
-  status_cell <- function(value) {
+  # The approval date sits beside the status it belongs to. There is no "Rev"
+  # here: a revision is derived from a set's lineage, and a subplan tree is not
+  # a set.
+  status_cell <- function(value, index) {
     if (!nzchar(value)) return(span("\u2014", "color" = th$ink_3))
-    span(value, "font-family" = .font_mono, "font-size" = "11px",
-         "padding" = "2px 7px", "border-radius" = "3px",
-         "border" = paste0("1px solid ", .status_colour(value, th)),
-         "color" = .status_colour(value, th))
+    approval <- .approval_note(m$approved_on[index], sep = " \u00b7 ")
+    htmltools::tagList(
+      span(value, "font-family" = .font_mono, "font-size" = "11px",
+           "padding" = "2px 7px", "border-radius" = "3px",
+           "border" = paste0("1px solid ", .status_colour(value, th)),
+           "color" = .status_colour(value, th)),
+      if (nzchar(approval)) {
+        span(approval, "font-family" = .font_mono, "font-size" = "11px",
+             "color" = th$ink_3, "margin-left" = "6px")
+      }
+    )
   }
 
   detail <- function(index) {

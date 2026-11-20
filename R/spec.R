@@ -109,6 +109,18 @@ as_widget <- function(x, height = NULL, width = NULL, ...) {
   paste0(ifelse(x >= 0, "+", "-"), floor(p + 0.5), "%")
 }
 
+# What a plan's approval says, e.g. "Rev 2 · 2026-11-12", or "" when there is
+# nothing to say. mediaplanr (>= 0.2.0) stores no revision on a plan: a
+# revision is a plan's place among the approved plans on its branch, so only
+# lineage() can derive it. A plan on its own (subplan_map()) carries just the
+# date it was approved, and an unapproved plan has neither.
+.approval_note <- function(approved_on, revision = NA_integer_,
+                           sep = " &middot; ") {
+  parts <- c(if (!is.na(revision)) paste0("Rev ", revision),
+             if (!is.na(approved_on)) format(approved_on))
+  paste(parts, collapse = sep)
+}
+
 # Every ec_* takes either the mediaplanr object or the projection it draws
 # from -- so a caller who has already joined model output onto a projection
 # can still draw it. S7 classes carry their qualified name in class(), so this

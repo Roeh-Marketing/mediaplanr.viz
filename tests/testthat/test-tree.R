@@ -27,11 +27,52 @@ test_that("labels and tooltips carry formatted figures, not raw numbers", {
   root <- o$series[[1]]$data[[1]]
   expect_identical(root$label$formatter, "{k|Q3 topline}\n{v|205}")
   expect_match(root$tooltip$formatter, "3 line items")
-  expect_match(root$tooltip$formatter, "Rev 1")
   tv <- root$children[[1]]
   expect_identical(tv$label$formatter, "{k|TV}\n{v|125}")
   expect_match(tv$tooltip$formatter, "<b>TV detail</b>")
   expect_match(tv$tooltip$formatter, "to review")
+})
+
+test_that("a plan tree shows approval dates and never a revision", {
+  # A revision is derived from a set's lineage; a subplan tree is not a set,
+  # so it has a date to show and nothing else.
+  o <- opt(ec_tree(approved_topline()))
+  root <- o$series[[1]]$data[[1]]
+  expect_match(root$tooltip$formatter, "approved &middot; 2026-06-30<br>",
+               fixed = TRUE)
+  expect_no_match(root$tooltip$formatter, "Rev")
+  # Approved with no date recorded: the status alone, no dangling separator.
+  nbc <- opt(ec_tree(nested_plan()))$series[[1]]$data[[1]]$children[[1]]$children[[1]]
+  expect_match(nbc$tooltip$formatter, "approved<br>", fixed = TRUE)
+})
+
+test_that("lineage gives an approved scenario its revision, date and currency", {
+  spec <- ec_lineage(approved_chain_set())
+  base <- opt(spec)$series[[1]]$data[[1]]
+  kids <- vapply(base$children, function(k) k$name, character(1))
+  up   <- base$children[[which(kids == "Search up")]]
+  open <- base$children[[which(kids == "Social up")]]
+
+  # base is Rev 1, but an approved scenario was derived from it since.
+  expect_match(base$tooltip$formatter, "Rev 1 &middot; 2026-06-01<br>",
+               fixed = TRUE)
+  expect_null(base$symbol)
+  # "Search up" is Rev 2 on its branch and nothing approved follows it.
+  expect_match(up$tooltip$formatter,
+               "Rev 2 &middot; 2026-06-15 &middot; current<br>", fixed = TRUE)
+  expect_identical(up$symbol, "diamond")
+  # Unapproved: no revision, no date, ordinary node.
+  expect_no_match(open$tooltip$formatter, "Rev")
+  expect_null(open$symbol)
+
+  expect_identical(spec$meta$current, "Search up")
+})
+
+test_that("an unapproved set has no revisions and no current plan", {
+  spec <- ec_lineage(chain_set())
+  expect_no_match(as_json(spec), "Rev ")
+  expect_no_match(as_json(spec), "diamond")
+  expect_length(spec$meta$current, 0)
 })
 
 test_that("a key containing the separator survives the rich-text label", {

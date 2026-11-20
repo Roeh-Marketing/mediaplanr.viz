@@ -77,7 +77,7 @@ search <- media_plan_from_df(
 
 plan <- revise(
   attach_subplan(attach_subplan(topline, attach_subplan(tv, nbc)), search),
-  revision = 2
+  status = "approved", approved_on = as.Date("2026-03-30")
 )
 plan_tree(plan)
 ```
@@ -145,6 +145,11 @@ derived from**, so the chain reads as a chain: *no audio* is −144,000 against
 *social up*, not against the baseline. `compare_scenarios()` — and
 `ec_compare()` below — measure everything against the baseline instead. Both
 are true; they answer different questions.
+
+The baseline is approved and nothing approved has been derived from it, so it
+is the current approved plan — the plan being bought against — and is drawn as
+a diamond. Its tooltip reads *Rev 1* with its approval date: a revision is
+derived from the lineage, never stored on a plan.
 
 ```{r}
 as_widget(ec_compare(set), height = "320px")

@@ -64,6 +64,15 @@ test_that("tbl_tree accepts the projection and a theme", {
   expect_s3_class(tbl_tree(nested_plan(), theme = "dark"), "reactable")
 })
 
+test_that("tbl_tree puts the approval date beside the status, with no revision", {
+  # The cells are rendered in R, so the widget's payload holds their HTML.
+  payload <- function(t) as.character(htmlwidgets:::toJSON(t$x))
+  approved <- payload(tbl_tree(approved_topline()))
+  expect_match(approved, "2026-06-30", fixed = TRUE)
+  expect_no_match(approved, "Rev ")
+  expect_no_match(payload(tbl_tree(nested_plan())), "Rev ")
+})
+
 # ---- sunburst -----------------------------------------------------------------
 
 test_that("ec_sunburst opens a backed cell into its subplan's line items", {
