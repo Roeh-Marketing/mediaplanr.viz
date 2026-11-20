@@ -38,11 +38,18 @@ ec_lineage(x, base_name = NULL, theme = "light")
 A
 [`new_spec()`](https://roeh-marketing.github.io/mediaplanr.viz/reference/new_spec.md)
 of kind `"lineage"`. Its `meta` carries `ids` and `scenarios` in row
-order.
+order, and `current`: the scenarios that are the current approved plan
+on their branch.
 
 ## Details
 
 Nodes are coloured by workflow **status**, and the baseline is ringed.
+An approved scenario with no approved descendant – the current approved
+plan on its branch, as
+[`mediaplanr::lineage()`](https://roeh-marketing.github.io/mediaplanr/reference/lineage.html)
+marks it – is drawn as a diamond, and an approved scenario's tooltip
+gives its revision and approval date, both derived by
+[`lineage()`](https://roeh-marketing.github.io/mediaplanr/reference/lineage.html).
 Scenarios whose parent is not in the set are roots, so a set of
 independently authored plans draws as a forest rather than a lie.
 
@@ -67,8 +74,8 @@ ec_lineage(set)
 #> <mediaplanr_spec> lineage
 #>   from    lineage()
 #>   series  1
-#>   size    1,979 bytes of JSON
-#>   meta    ids, scenarios, base_name
+#>   size    1,949 bytes of JSON
+#>   meta    ids, scenarios, base_name, current
 #> 
 #>   as_widget() to draw it, as_json() to send it
 ```

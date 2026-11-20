@@ -73,15 +73,15 @@ search <- media_plan_from_df(
 
 plan <- revise(
   attach_subplan(attach_subplan(topline, attach_subplan(tv, nbc)), search),
-  revision = 2
+  status = "approved", approved_on = as.Date("2026-03-30")
 )
 plan_tree(plan)
-#> Q2 2026 Brand Plan  Rev 2                                       2,315,000
-#> ├─ TV                      TV Q2 buys   flighted  3 line items  1,200,000
-#> │  ├─ TV | NBC             NBC upfront  weekly    2 line items    600,000
-#> │  └─ (editable)                                  2 line items    600,000
-#> ├─ Search                  Search Q2    weekly    2 line items    611,000
-#> └─ (editable)                                     2 line items    504,000
+#> Q2 2026 Brand Plan  [approved 2026-03-30]                                       2,315,000
+#> ├─ TV                                      TV Q2 buys   flighted  3 line items  1,200,000
+#> │  ├─ TV | NBC                             NBC upfront  weekly    2 line items    600,000
+#> │  └─ (editable)                                                  2 line items    600,000
+#> ├─ Search                                  Search Q2    weekly    2 line items    611,000
+#> └─ (editable)                                                     2 line items    504,000
 ```
 
 ## Structure
@@ -162,6 +162,11 @@ from**, so the chain reads as a chain: *no audio* is −144,000 against
 below — measure everything against the baseline instead. Both are true;
 they answer different questions.
 
+The baseline is approved and nothing approved has been derived from it,
+so it is the current approved plan — the plan being bought against — and
+is drawn as a diamond. Its tooltip reads *Rev 1* with its approval date:
+a revision is derived from the lineage, never stored on a plan.
+
 ``` r
 
 as_widget(ec_compare(set), height = "320px")
@@ -183,8 +188,8 @@ spec
 #> <mediaplanr_spec> lineage
 #>   from    lineage()
 #>   series  1
-#>   size    2,909 bytes of JSON
-#>   meta    ids, scenarios, base_name
+#>   size    2,921 bytes of JSON
+#>   meta    ids, scenarios, base_name, current
 #> 
 #>   as_widget() to draw it, as_json() to send it
 ```

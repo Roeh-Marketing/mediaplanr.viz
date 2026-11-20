@@ -67,7 +67,7 @@ ec_tree(mediaplanr::attach_subplan(topline, tv))
 #> <mediaplanr_spec> tree
 #>   from    subplan_map()
 #>   series  1
-#>   size    2,058 bytes of JSON
+#>   size    2,028 bytes of JSON
 #>   meta    ids, keys, owners
 #> 
 #>   as_widget() to draw it, as_json() to send it
